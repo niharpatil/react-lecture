@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
+import axios from 'axios'
 
 class TLAddItem extends Component {
 
@@ -8,7 +9,6 @@ class TLAddItem extends Component {
     this.state = {
       input: ""
     }
-
     this.addItem = this.addItem.bind(this)
   }
 
@@ -41,12 +41,32 @@ class TLAddItem extends Component {
 }
 
 
+function addItem(item) {
+  return dispatch => {
+    dispatch({
+      type: 'ADD_ITEM_REQUESTED'
+    })
+    axios.post('/api/additem',{
+      itemTitle: item
+    })
+    .then(resp => {
+      console.log(resp)
+      dispatch({
+        type: 'ADD_ITEM_SUCCESS'
+      })
+    })
+    .catch(e => {
+      dispatch({
+        type: 'ADD_ITEM_FAILURE'
+      })
+    })
+  }
+}
+
+
 const mapDispatchToProps = dispatch => {
   return {
-    addItemToStore: item => dispatch({
-      type: "ADD_TODO_ITEM",
-      newItem: item
-    }) 
+    addItemToStore: item => dispatch(addItem(item)) 
   }
 }
 
